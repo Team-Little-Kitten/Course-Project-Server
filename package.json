@@ -1,0 +1,25 @@
+{
+  "name": "course-project-server",
+  "version": "1.0.0",
+  "description": "",
+  "license": "MIT",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Team-Little-Kitten/Course-Project-Server.git"
+  },
+  "author": "team-little-kitten",
+  "homepage": "https://github.com/Team-Little-Kitten/Course-Project#readme",
+  "dependencies": {
+    "body-parser": "1.15.2",
+    "express": "4.14.0",
+    "express-session": "1.14.2",
+    "mongoose": "4.7.2",
+    "passport": "0.3.2",
+    "passport-local": "1.0.0"
+  },
+  "engines": {
+    "node": ">= 4.2.1",
+    "npm": ">= 3"
+  }
+}
