@@ -6,6 +6,7 @@ module.exports = () => {
     return {
         registerUser(req, res) {
             let body = req.body;
+            console.log(body);
             User.findOne({ username: body.username }, (err, user) => {
                 if (err) {
                     res.json(err);
