@@ -15,13 +15,14 @@
   "homepage": "https://github.com/Team-Little-Kitten/Course-Project#readme",
   "dependencies": {
     "body-parser": "1.15.2",
+    "chai": "^3.5.0",
+    "cors": "2.8.1",
     "express": "4.14.0",
     "express-session": "1.14.2",
+    "mocha": "^3.2.0",
     "mongoose": "4.7.2",
     "passport": "0.3.2",
-    "passport-local": "1.0.0",
-    "chai": "^3.5.0",
-    "mocha": "^3.2.0"
+    "passport-local": "1.0.0"
   },
   "engines": {
     "node": ">= 4.2.1",
