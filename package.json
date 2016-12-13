@@ -4,7 +4,8 @@
   "description": "",
   "license": "MIT",
   "scripts": {
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "test": "./node_modules/.bin/mocha tests tests/**/*.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +24,9 @@
   "engines": {
     "node": ">= 4.2.1",
     "npm": ">= 3"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
   }
 }
