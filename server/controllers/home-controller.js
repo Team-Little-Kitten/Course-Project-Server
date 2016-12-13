@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = function () {
+module.exports = () => {
     return {
         loadHomePage(req, res) {
             res.json(JSON.stringify({ "array": "arrrraaay" }))

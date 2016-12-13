@@ -7,6 +7,7 @@ module.exports = () => {
     let app = express();
 
     app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
     app.use(expressSession({
         secret: "noissessserpxe",
         resave: true,

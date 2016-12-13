@@ -4,5 +4,7 @@ const mongoose = require("mongoose");
 
 mongoose.Promise = global.Promise;
 module.exports = config => {
-    mongoose.createConnection(config.connectionString);
+    mongoose.connect(config.connectionString)
+        .then(console.log)
+        .catch(console.log);
 };
