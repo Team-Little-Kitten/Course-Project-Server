@@ -77,6 +77,16 @@ module.exports = () => {
         logoutUser(req, res) {
             req.logout();
             res.sendStatus(200);
+        },
+        verifyLogin(req, res) {
+            let authToken = req.body.authToken;
+
+            if (!req.user || req.user.authToken !== authToken) {
+                res.json({ isLoggedIn: false });
+                return;
+            }
+
+            res.json({ isLoggedIn: true });
         }
     };
 };
