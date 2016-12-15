@@ -15,12 +15,11 @@ module.exports = app => {
                 console.log(err);
             } else if (!user) {
                 done(null, false, { message: "Incorrect credentials." });
-            } /* else if (!user.isValidPassword(password)) { <=== SHOULD VALIDATE IF THE PASSWORD MATCHES
-                 done(null, false, { message: "Incorrect credentials." });
-            }*/ else {
+            } else if (!user.isValidPassword(password)) { 
+                done(null, false, { message: "Incorrect credentials." });
+            } else {
                 return done(null, user);
             }
-
         });
     }));
 
