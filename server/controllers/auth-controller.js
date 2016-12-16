@@ -3,38 +3,21 @@
 const User = require("../models/user");
 const passport = require("passport");
 const encryption = require("../utils/encryption");
+const config = require("../config");
+const jwt = require('jwt-simple');
 
-function localAuthentication(req, res) {
-    return (err, userModel) => {
-        if (err) {
-            return err;
+function getToken(headers) {
+    if (headers && headers.authorization) {
+        var parted = headers.authorization.split(' ');
+        if (parted.length === 2) {
+            return parted[1];
+        } else {
+            return null;
         }
-
-        if (!userModel) {
-            return res.json("{\"error\": \"Invalid username or password.\"}");
-        }
-
-        req.login(userModel, error => {
-            if (error) {
-                return res.json("{\"error\": \"Invalid username or password.\"}");
-            }
-
-            let salt = encryption.getSalt();
-            let authToken = encryption.getPassHash(salt, userModel.username);
-
-            User.findOneAndUpdate({ username: userModel.username }, { authToken }, () => {
-                req.user.authToken = authToken;
-                return res.json({
-                    username: req.user.username,
-                    firstname: req.user.firstname,
-                    lastname: req.user.lastname,
-                    _id: req.user._id,
-                    authToken: req.user.authToken
-                });
-            });
-        });
-    };
-}
+    } else {
+        return null;
+    }
+};
 
 module.exports = () => {
     return {
@@ -72,21 +55,61 @@ module.exports = () => {
             })
         },
         loginUser(req, res, next) {
-            passport.authenticate("local", localAuthentication(req, res))(req, res, next);
+            User.findOne({ username: req.body.username }, (err, user) => {
+                if (err) {
+                    throw err;
+                }
+
+                if (!user) {
+                    res.json("{\"error\": \"Invalid username or password.\"}");
+                } else {
+                    if (user.isValidPassword(req.body.password)) {
+                        let token = 'JWT ' + jwt.encode(user, config.jwtSecret);
+                        let result = {
+                            token,
+                            username: user.username,
+                            firstname: user.firstname,
+                            lastname: user.lastname,
+                            _id: user._id
+                        };
+
+                        return res.json({ result });
+                    }
+
+                    return res.json("{\"error\": \"Invalid username or password.\"}");
+                }
+            });
         },
         logoutUser(req, res) {
             req.logout();
             res.sendStatus(200);
         },
         verifyLogin(req, res) {
-            let authToken = req.body.authToken;
+            var token = getToken(req.headers);
+            if (token) {
+                let decoded = jwt.decode(token, config.jwtSecret);
+                User.findOne({
+                    username: decoded.username
+                }, function (err, user) {
+                    if (err) throw err;
 
-            if (!req.user || req.user.authToken !== authToken) {
-                res.json({ isLoggedIn: false });
-                return;
+                    if (!user) {
+                        return res.json({ success: false, message: 'User not found.' });
+                    } else {
+                        res.json({
+                            success: true, user: {
+                                token,
+                                username: user.username,
+                                firstname: user.firstname,
+                                lastname: user.lastname,
+                                _id: user._id
+                            }
+                        });
+                    }
+                });
+            } else {
+                return res.json({ success: false, message: "No token provided" });
             }
-
-            res.json({ isLoggedIn: true });
         }
     };
 };

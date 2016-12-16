@@ -6,8 +6,7 @@ let userSchema = mongoose.Schema({
     lastname: String,
     username: { type: String, unique: true },
     salt: { type: String, required: true },
-    passHash: { type: String, required: true },
-    authToken: String
+    passHash: { type: String, required: true }
 });
 
 userSchema.methods = {
