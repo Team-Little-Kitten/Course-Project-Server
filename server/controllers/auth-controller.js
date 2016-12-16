@@ -49,7 +49,9 @@ module.exports = () => {
                         username: result.username,
                         firstname: result.firstname,
                         lastname: result.lastname,
-                        _id: result._id
+                        _id: result._id,
+                        about: result.about,
+                        signature: result.signature
                     });
                 });
             })
@@ -70,7 +72,9 @@ module.exports = () => {
                             username: user.username,
                             firstname: user.firstname,
                             lastname: user.lastname,
-                            _id: user._id
+                            _id: user._id,
+                            about: user.about,
+                            signature: user.signature
                         };
 
                         return res.json({ result });
@@ -102,7 +106,9 @@ module.exports = () => {
                                 username: user.username,
                                 firstname: user.firstname,
                                 lastname: user.lastname,
-                                _id: user._id
+                                _id: user._id,
+                                about: user.about,
+                                signature: user.signature
                             }
                         });
                     }
