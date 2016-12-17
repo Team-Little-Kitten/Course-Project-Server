@@ -1,10 +1,10 @@
 const LiteraryPiece = require("./../models/literary-piece");
 
 function compareByDate(a, b) {
-    if (a.createdOn < b.createdOn)  {
+    if (a.createdOn > b.createdOn)  {
         return -1;
     }
-    if (a.createdOn > b.createdOn) {
+    if (a.createdOn < b.createdOn) {
         return 1;
     }  
     return 0;
