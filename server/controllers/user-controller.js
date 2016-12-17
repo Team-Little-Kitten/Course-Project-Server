@@ -17,7 +17,8 @@ module.exports = () => {
                         lastname: user.lastname,
                         _id: user._id,
                         about: user.about,
-                        signature: user.signature
+                        signature: user.signature,
+                        imageDataUrl: user.imageDataUrl
                     }
                 });
             });
@@ -28,6 +29,7 @@ module.exports = () => {
 
             if (body.about) updateObject.about = body.about;
             if (body.signature) updateObject.signature = body.signature;
+            if (body.imageDataUrl) updateObject.imageDataUrl = body.imageDataUrl;
 
             User.findByIdAndUpdate(req.params.id, updateObject, (err, user) => {
                 if (err) {
@@ -49,7 +51,8 @@ module.exports = () => {
                             lastname: data.lastname,
                             _id: data._id,
                             about: data.about,
-                            signature: data.signature
+                            signature: data.signature,
+                            imageDataUrl: data.imageDataUrl
                         }
                     });
                 });
