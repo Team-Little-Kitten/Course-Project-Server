@@ -4,7 +4,6 @@
 const path = require("path");
 const fs = require("fs");
 
-
 module.exports = ({ app, config, passport }) => {
     let controllers = {};
     fs.readdirSync(__dirname)
