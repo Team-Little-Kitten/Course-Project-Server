@@ -7,10 +7,13 @@ module.exports = () => {
                 if (err) {
                     return res.json(err);
                 }
-                
+
                 return res.json(pieces);
             });
         },
-        
+        createPiece(req, res) {
+            console.log(req.body);
+            res.json({ message: "succefully sent" });
+        }
     }
 }
