@@ -1,5 +1,15 @@
 const LiteraryPiece = require("./../models/literary-piece");
 
+function compareByDate(a, b) {
+    if (a.createdOn < b.createdOn)  {
+        return -1;
+    }
+    if (a.createdOn > b.createdOn) {
+        return 1;
+    }  
+    return 0;
+}
+
 module.exports = () => {
     return {
         getAllPieces(req, res) {
@@ -29,6 +39,17 @@ module.exports = () => {
         getPiecesByAuthor(req, res) {
             console.log(req.body);
             res.json({ message: "succefully sent" });
+        },
+        getPiecesForHomepage(req, res) {
+            LiteraryPiece.find({}, (err, pieces) => {
+                if (err) {
+                    return res.json(err);
+                }
+
+                let filteredPieces = [];
+                filteredPieces = pieces.sort(compareByDate).slice(0, 3);
+                return res.json(filteredPieces);
+            });
         }
     }
 }
