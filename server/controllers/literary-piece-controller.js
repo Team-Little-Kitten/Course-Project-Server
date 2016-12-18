@@ -1,5 +1,15 @@
 const LiteraryPiece = require("./../models/literary-piece");
 
+function compareByDate(a, b) {
+    if (a.createdOn > b.createdOn)  {
+        return -1;
+    }
+    if (a.createdOn < b.createdOn) {
+        return 1;
+    }  
+    return 0;
+}
+
 module.exports = () => {
     return {
         getAllPieces(req, res) {
