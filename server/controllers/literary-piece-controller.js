@@ -27,8 +27,28 @@ module.exports = () => {
             });
         },
         getPiecesByAuthor(req, res) {
-            console.log(req.body);
-            res.json({ message: "succefully sent" });
+            let author = req.query.username
+            LiteraryPiece.find({ author })
+                .where("deletedOn")
+                .equals(null)
+                .exec((err, pieces) => {
+                    if (err) {
+                        return res.json(err);
+                    }
+                    return res.json(pieces);
+                });
+        },
+        getPieceById(req, res) {
+            let _id = req.query.id;
+            LiteraryPiece.find({ _id })
+                .where("deletedOn")
+                .equals(null)
+                .exec((err, piece) => {
+                    if (err) {
+                        return res.json(err);
+                    }
+                    return res.json(piece);
+                });
         }
     }
 }
