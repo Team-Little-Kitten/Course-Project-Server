@@ -50,6 +50,15 @@ module.exports = () => {
                 filteredPieces = pieces.sort(compareByDate).slice(0, 3);
                 return res.json(filteredPieces);
             });
+        },
+        getPieceById(req, res) {
+            let id = req.params.id;
+            LiteraryPiece.findOne({_id: id }, (err, piece) => {
+                if (err) {
+                    return res.json(err);
+                }
+                return res.json(piece);
+            })
         }
     }
 }
