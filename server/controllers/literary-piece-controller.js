@@ -29,15 +29,17 @@ module.exports = () => {
                 body: recievedPiece.pieceBody,
                 author: recievedPiece.author,
                 genre: recievedPiece.genre
-            })
+            });
             piece.save((err, result, affected) => {
                 if (err) {
-                    res.json({ message: { type: "error", text: "GREDAAAAAAAAAAA" } });
+                    res.json({ message: { type: "error", text: err } });
+                } else {
+                    res.json({ message: { type: "success", text: affected } });
                 }
             });
         },
         getPiecesByAuthor(req, res) {
-            let author = req.query.username
+            let author = req.query.username;
             LiteraryPiece.find({ author })
                 .where("deletedOn")
                 .equals(null)
@@ -70,6 +72,27 @@ module.exports = () => {
                     }
                     return res.json(piece);
                 });
+        },
+        updatePiece(req, res) {
+            let id = req.query.id;
+            let body = req.body;
+            let update = {
+                title: body.title,
+                subtitle: body.subtitle,
+                body: body.pieceBody,
+                genre: body.genre
+            };
+
+            let options = { new: true };
+
+            LiteraryPiece.findOneAndUpdate({ "_id": id }, update, options,
+                (err) => {
+                    if (err) {
+                        res.json({ message: { type: "error", text: "Duplicate key!" } });
+                    } else {
+                        res.json({ message: { type: "success", text: "Successfuly saved." } });
+                    }
+                });
         }
-    }
-}
+    };
+};
