@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-
 let literaryPieceSchema = new Schema({
     title: { type: String, unique: true },
     subtitle: { type: String },
@@ -18,11 +17,11 @@ let literaryPieceSchema = new Schema({
     }],
     ratings: [{
         author: String,
-        story: Number,
-        characters: Number,
-        dialogue: Number,
-        style: Number,
-        feel: Number
+        story: { type: Number, default: 0 },
+        characters: { type: Number, default: 0 },
+        dialogue: { type: Number, default: 0 },
+        style: { type: Number, default: 0 },
+        feel: { type: Number, default: 0 }
     }]
 });
 
