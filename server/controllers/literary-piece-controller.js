@@ -23,12 +23,14 @@ module.exports = () => {
         },
         createPiece(req, res) {
             let recievedPiece = req.body;
+            console.log(recievedPiece)
             let piece = new LiteraryPiece({
                 title: recievedPiece.title,
                 subtitle: recievedPiece.subtitle,
                 body: recievedPiece.pieceBody,
                 author: recievedPiece.author,
-                genre: recievedPiece.genre
+                genre: recievedPiece.genre,
+                imageDataUrl: recievedPiece.imageDataUrl
             });
             piece.save((err, result, affected) => {
                 if (err) {
