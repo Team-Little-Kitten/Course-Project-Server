@@ -88,8 +88,6 @@ module.exports = () => {
 
                     return res.json(resultToSend);
                 });
-
-
         },
         getPiecesForHomepage(req, res) {
             LiteraryPiece.find({}, (err, pieces) => {
