@@ -40,15 +40,54 @@ module.exports = () => {
         },
         getPiecesByAuthor(req, res) {
             let author = req.query.username;
-            LiteraryPiece.find({ author })
-                .where("deletedOn")
-                .equals(null)
-                .exec((err, pieces) => {
-                    if (err) {
-                        return res.json(err);
-                    }
-                    return res.json(pieces);
+            let page = req.query.page;
+            let pageSize = req.query.pageSize;
+            let skip = (+page - 1) * pageSize;
+            let limit = +pageSize;
+
+            console.log(req.query);
+            let result = {};
+            // if (err) {
+            //     return res.json(err);
+            // }
+            // return res.json(pieces);
+            let countPromise = new Promise((resolve, reject) => {
+                LiteraryPiece.find({ author })
+                    .where("deletedOn")
+                    .equals(null)
+                    .count((err, count) => {
+                        if (err) {
+                            reject();
+                        }
+                        resolve(result.count = count);
+                    });
+            });
+            let piecePromise = new Promise((resolve, reject) => {
+                LiteraryPiece.find({ author })
+                    .where("deletedOn")
+                    .equals(null)
+                    .skip(skip)
+                    .limit(limit)
+                    .sort({ createdOn: -1 })
+                    .exec((err, pieces) => {
+                        if (err) {
+                            reject();
+                        }
+                        resolve(result.pieces = pieces)
+                    });
+
+            });
+
+            return Promise.all([countPromise, piecePromise])
+                .then(resolved => {
+                    let resultToSend = {};
+                    resultToSend.count = resolved[0];
+                    resultToSend.pieces = resolved[1];
+
+                    return res.json(resultToSend);
                 });
+
+
         },
         getPiecesForHomepage(req, res) {
             LiteraryPiece.find({}, (err, pieces) => {
