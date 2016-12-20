@@ -121,7 +121,8 @@ module.exports = () => {
                 title: body.title,
                 subtitle: body.subtitle,
                 body: body.pieceBody,
-                genre: body.genre
+                genre: body.genre,
+                imageDataUrl: body.imageDataUrl
             };
 
             let options = { new: true };
