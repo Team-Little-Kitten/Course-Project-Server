@@ -90,7 +90,35 @@ module.exports = () => {
                     if (err) {
                         res.json({ message: { type: "error", text: "Duplicate key!" } });
                     } else {
-                        res.json({ message: { type: "success", text: "Successfuly saved." } });
+                        res.json({
+                            message: { type: "success", text: "Successfuly saved." }
+                        });
+                    }
+                });
+        },
+        addComment(req, res) {
+            let id = req.body.id;
+            let newComment = {
+                content: req.body.commentBody,
+                author: req.body.author
+            };
+            console.log(req.body);
+            let update = {
+                $push: { "comments": newComment }
+            };
+
+            let options = { new: true };
+
+            LiteraryPiece.findOneAndUpdate({ "_id": id }, update, options,
+                (err, updatedResult) => {
+                    if (err) {
+                        res.json({ message: { type: "error", text: "Duplicate key!" } });
+                    } else {
+                        console.log(updatedResult);
+                        res.json({
+                            updatedComments: updatedResult.comments,
+                            message: { type: "success", text: "Successfuly saved." }
+                        });
                     }
                 });
         }
