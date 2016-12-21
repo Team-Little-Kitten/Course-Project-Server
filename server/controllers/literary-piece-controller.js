@@ -23,12 +23,14 @@ module.exports = () => {
         },
         createPiece(req, res) {
             let recievedPiece = req.body;
+            console.log(recievedPiece)
             let piece = new LiteraryPiece({
                 title: recievedPiece.title,
                 subtitle: recievedPiece.subtitle,
                 body: recievedPiece.pieceBody,
                 author: recievedPiece.author,
-                genre: recievedPiece.genre
+                genre: recievedPiece.genre,
+                imageDataUrl: recievedPiece.imageDataUrl
             });
             piece.save((err, result, affected) => {
                 if (err) {
@@ -119,7 +121,8 @@ module.exports = () => {
                 title: body.title,
                 subtitle: body.subtitle,
                 body: body.pieceBody,
-                genre: body.genre
+                genre: body.genre,
+                imageDataUrl: body.imageDataUrl
             };
 
             let options = { new: true };
@@ -129,7 +132,35 @@ module.exports = () => {
                     if (err) {
                         res.json({ message: { type: "error", text: "Duplicate key!" } });
                     } else {
-                        res.json({ message: { type: "success", text: "Successfuly saved." } });
+                        res.json({
+                            message: { type: "success", text: "Successfuly saved." }
+                        });
+                    }
+                });
+        },
+        addComment(req, res) {
+            let id = req.body.id;
+            let newComment = {
+                content: req.body.commentBody,
+                author: req.body.author
+            };
+            console.log(req.body);
+            let update = {
+                $push: { "comments": newComment }
+            };
+
+            let options = { new: true };
+
+            LiteraryPiece.findOneAndUpdate({ "_id": id }, update, options,
+                (err, updatedResult) => {
+                    if (err) {
+                        res.json({ message: { type: "error", text: "Duplicate key!" } });
+                    } else {
+                        console.log(updatedResult);
+                        res.json({
+                            updatedComments: updatedResult.comments,
+                            message: { type: "success", text: "Successfuly saved." }
+                        });
                     }
                 });
         }
