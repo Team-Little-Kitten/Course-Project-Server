@@ -3,7 +3,7 @@
 const mongoose = require("mongoose");
 
 const thread = mongoose.Schema({
-    title: String,
+    title: { type: String, unique: false },
     content: String,
     author: {
         username: String,
@@ -21,4 +21,5 @@ const thread = mongoose.Schema({
     }]
 });
 
-module.exports = mongoose.model("thread", thread);
+const Thread = mongoose.model("thread", thread, "threads");
+module.exports = Thread;
