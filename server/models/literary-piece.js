@@ -14,7 +14,9 @@ let literaryPieceSchema = new Schema({
         content: String,
         author: String,
         postDate: { type: Date, default: Date.now },
-        averageRating: { type: Number, default: 0 }
+        averageRating: { type: Number, default: 0 },
+        likedBy: [],
+        dislikedBy: []
     }],
     ratings: [{
         author: String,

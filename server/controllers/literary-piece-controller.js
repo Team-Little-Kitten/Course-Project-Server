@@ -185,7 +185,6 @@ module.exports = () => {
                 feel: +req.body.feelRating
             };
 
-            console.log(req.body);
             let update = {
                 $push: { "comments": newComment, "ratings": newRating }
             };
@@ -197,12 +196,91 @@ module.exports = () => {
                     if (err) {
                         res.json({ message: { type: "error", text: "Duplicate key!" } });
                     } else {
-                        console.log(updatedResult);
                         res.json({
                             updatedComments: updatedResult.comments,
                             updatedRatings: updatedResult.ratings,
                             message: { type: "success", text: "Successfuly saved." }
                         });
+                    }
+                });
+        },
+        likeComment(req, res) {
+            let pieceId = req.body.pieceId;
+            let commentId = req.body.commentId;
+            let username = req.body.currentUser;
+
+            LiteraryPiece.findOne({ "_id": pieceId },
+                (err, resultedPiece) => {
+                    if (err) {
+                        res.json({ message: { type: "error", text: "Duplicate key!" } });
+                    } else {
+                        for (let i = 0; i < resultedPiece.comments.length; i+= 1) {
+                            if (resultedPiece.comments[i]._id == commentId) {
+                                resultedPiece.comments[i].likedBy.push(username);
+                                break;
+                            }
+                        }
+
+                        for (let i = 0; i < resultedPiece.comments.length; i += 1) {
+                            if (resultedPiece.comments[i]._id == commentId) {
+                                for (let j = 0; j < resultedPiece.comments[i].dislikedBy.length; j += 1) {
+                                    if (resultedPiece.comments[i].dislikedBy[j] === username) {
+                                        resultedPiece.comments[i].dislikedBy = resultedPiece.comments[i].dislikedBy.splice(j, 1);
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+
+                        resultedPiece
+                            .save()
+                            .then(() => {
+                                console.log("da");
+                                res.json({
+                                    updatedComments: resultedPiece.comments,
+                                    message: { type: "success", text: "Successfuly rated." }
+                                });
+                            });
+                    }
+                });
+        },
+        dislikeComment(req, res) {
+            let pieceId = req.body.pieceId;
+            let commentId = req.body.commentId;
+            let username = req.body.currentUser;
+            
+            LiteraryPiece.findOne({ "_id": pieceId },
+                (err, resultedPiece) => {
+                    if (err) {
+                        res.json({ message: { type: "error", text: "Duplicate key!" } });
+                    } else {
+                        for (let i = 0; i < resultedPiece.comments.length; i+= 1) {
+                            if (resultedPiece.comments[i]._id == commentId) {
+                                resultedPiece.comments[i].dislikedBy.push(username);
+                                break;
+                            }
+                        }
+
+                        for (let i = 0; i < resultedPiece.comments.length; i += 1) {
+                            if (resultedPiece.comments[i]._id == commentId) {
+                                for (let j = 0; j < resultedPiece.comments[i].likedBy.length; j += 1) {
+                                    if (resultedPiece.comments[i].likedBy[j] === username) {
+                                        resultedPiece.comments[i].likedBy = resultedPiece.comments[i].likedBy.splice(j, 1);
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+
+                        resultedPiece.save()
+                            .then(
+                                res.json({
+                                    updatedComments: resultedPiece.comments,
+                                    message: { type: "success", text: "Successfuly rated." }
+                                })
+                            );
                     }
                 });
         }

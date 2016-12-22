@@ -11,4 +11,6 @@ module.exports = ({ app, controllers }) => {
     app.post("/api/pieces/create", controller.createPiece);
     app.post("/api/pieces/update", controller.updatePiece);
     app.post("/api/pieces/add-comment", controller.addComment);
+    app.post("/api/pieces/like-comment", controller.likeComment);
+    app.post("/api/pieces/dislike-comment", controller.dislikeComment);
 };
