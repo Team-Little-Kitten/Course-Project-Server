@@ -145,9 +145,19 @@ module.exports = () => {
                 content: req.body.commentBody,
                 author: req.body.author
             };
+
+            let newRating = {
+                author: req.body.author,
+                story: +req.body.storyRating,
+                characters: +req.body.charactersRating,
+                dialogue: +req.body.dialogueRating,
+                style: +req.body.styleRating,
+                feel: +req.body.feelRating
+            };
+
             console.log(req.body);
             let update = {
-                $push: { "comments": newComment }
+                $push: { "comments": newComment, "ratings": newRating }
             };
 
             let options = { new: true };
@@ -160,6 +170,7 @@ module.exports = () => {
                         console.log(updatedResult);
                         res.json({
                             updatedComments: updatedResult.comments,
+                            updatedRatings: updatedResult.ratings,
                             message: { type: "success", text: "Successfuly saved." }
                         });
                     }
