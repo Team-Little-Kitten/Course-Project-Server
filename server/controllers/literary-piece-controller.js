@@ -25,7 +25,6 @@ function compareByRating(a, b) {
     ratingA /= a.comments.length;
     ratingB /= b.comments.length;
 
-    console.log(ratingA, ratingB);
     if (ratingA > ratingB) {
         return 1;
     }
@@ -48,7 +47,6 @@ module.exports = () => {
         },
         createPiece(req, res) {
             let recievedPiece = req.body;
-            console.log(recievedPiece)
             let piece = new LiteraryPiece({
                 title: recievedPiece.title,
                 subtitle: recievedPiece.subtitle,
@@ -72,7 +70,6 @@ module.exports = () => {
             let skip = (+page - 1) * pageSize;
             let limit = +pageSize;
 
-            console.log(req.query);
             let result = {};
             // if (err) {
             //     return res.json(err);
@@ -124,7 +121,6 @@ module.exports = () => {
                 let filteredPiecesByRating = [];
                 filteredPiecesByDate = pieces.sort(compareByDate).slice(0, 3);
                 filteredPiecesByRating = pieces.sort(compareByRating).slice(0, 3);
-                console.log(filteredPiecesByRating);
 
                 return res.json({ filteredPiecesByDate, filteredPiecesByRating });
             });
@@ -220,12 +216,11 @@ module.exports = () => {
                                 break;
                             }
                         }
-
                         for (let i = 0; i < resultedPiece.comments.length; i += 1) {
                             if (resultedPiece.comments[i]._id == commentId) {
                                 for (let j = 0; j < resultedPiece.comments[i].dislikedBy.length; j += 1) {
                                     if (resultedPiece.comments[i].dislikedBy[j] === username) {
-                                        resultedPiece.comments[i].dislikedBy = resultedPiece.comments[i].dislikedBy.splice(j, 1);
+                                        resultedPiece.comments[i].dislikedBy.splice(j, 1);
                                         break;
                                     }
                                 }
@@ -236,7 +231,6 @@ module.exports = () => {
                         resultedPiece
                             .save()
                             .then(() => {
-                                console.log("da");
                                 res.json({
                                     updatedComments: resultedPiece.comments,
                                     message: { type: "success", text: "Successfuly rated." }
@@ -249,7 +243,7 @@ module.exports = () => {
             let pieceId = req.body.pieceId;
             let commentId = req.body.commentId;
             let username = req.body.currentUser;
-            
+
             LiteraryPiece.findOne({ "_id": pieceId },
                 (err, resultedPiece) => {
                     if (err) {
@@ -266,7 +260,7 @@ module.exports = () => {
                             if (resultedPiece.comments[i]._id == commentId) {
                                 for (let j = 0; j < resultedPiece.comments[i].likedBy.length; j += 1) {
                                     if (resultedPiece.comments[i].likedBy[j] === username) {
-                                        resultedPiece.comments[i].likedBy = resultedPiece.comments[i].likedBy.splice(j, 1);
+                                        resultedPiece.comments[i].likedBy.splice(j, 1);
                                         break;
                                     }
                                 }
