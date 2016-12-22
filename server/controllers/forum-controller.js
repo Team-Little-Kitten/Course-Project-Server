@@ -1,6 +1,7 @@
 "user strict";
 
-const Thread = require("../models/thread");
+const Thread = require("./../models/thread");
+const User = require("./../models/user");
 
 function getCategoryRealName(categoryName) {
     if (categoryName === "userSuggestions") return "User Suggestions";
@@ -15,21 +16,37 @@ module.exports = () => {
         createThread(req, res) {
             let body = req.body;
             let thread = body.thread;
-            let newThread = {
-                title: thread.title,
-                content: thread.content,
-                author: thread.author,
-                dateOfCreationg: Date.now(),
-                category: thread.category,
-                comments: []
-            };
+            let username = body.thread.author;
 
-            Thread.create(newThread)
-                .then(createdThread => {
-                    res.json({ success: true, thread: createdThread });
-                }, error => {
-                    res.json({ success: false, message: error.toString() });
+
+            User.findOne({ username }, (err, result) => {
+                if (err) {
+                    return res.json({ message: { type: "error", text: err.toString() } });
+                }
+                let author = {};
+                author.username = result.username;
+                author._id = result._id;
+
+                return author;
+            }).then((author) => {
+                let newThread = new Thread({
+                    title: thread.title,
+                    content: thread.content,
+                    author,
+                    dateOfCreationg: Date.now(),
+                    category: thread.category,
+                    comments: []
                 });
+
+                newThread.save()
+                    .then(createdThread => {
+                        res.json({ message: { type: "success", text: createdThread } });
+                    }, error => {
+                        res.json({ message: { type: "error", text: error.toString() } });
+                    });
+
+            });
+
         },
         findThreadByTitle(req, res) {
             let body = req.body;
