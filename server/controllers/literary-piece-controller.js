@@ -10,6 +10,31 @@ function compareByDate(a, b) {
     return 0;
 }
 
+function compareByRating(a, b) {
+    let ratingA = 0;
+    let ratingB = 0;
+
+    for (let i = 0; i < a.comments.length; i += 1) {
+        ratingA += +a.comments[i].averageRating;
+    }
+
+    for (let i = 0; i < b.comments.length; i += 1) {
+        ratingA += +b.comments[i].averageRating;
+    }
+
+    ratingA /= a.comments.length;
+    ratingB /= b.comments.length;
+
+    console.log(ratingA, ratingB);
+    if (ratingA > ratingB) {
+        return 1;
+    }
+    if (ratingA < ratingB) {
+        return -1;
+    }
+    return 0;
+}
+
 module.exports = () => {
     return {
         getAllPieces(req, res) {
@@ -95,9 +120,13 @@ module.exports = () => {
                     return res.json(err);
                 }
 
-                let filteredPieces = [];
-                filteredPieces = pieces.sort(compareByDate).slice(0, 3);
-                return res.json(filteredPieces);
+                let filteredPiecesByDate = [];
+                let filteredPiecesByRating = [];
+                filteredPiecesByDate = pieces.sort(compareByDate).slice(0, 3);
+                filteredPiecesByRating = pieces.sort(compareByRating).slice(0, 3);
+                console.log(filteredPiecesByRating);
+
+                return res.json({ filteredPiecesByDate, filteredPiecesByRating });
             });
         },
         getPieceById(req, res) {
