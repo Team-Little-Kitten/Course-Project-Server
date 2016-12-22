@@ -143,7 +143,8 @@ module.exports = () => {
             let id = req.body.id;
             let newComment = {
                 content: req.body.commentBody,
-                author: req.body.author
+                author: req.body.author,
+                averageRating: (+req.body.storyRating + +req.body.charactersRating + +req.body.dialogueRating + +req.body.styleRating + +req.body.feelRating) / 5
             };
 
             let newRating = {

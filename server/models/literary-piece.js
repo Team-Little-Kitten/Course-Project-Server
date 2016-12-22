@@ -13,7 +13,8 @@ let literaryPieceSchema = new Schema({
     comments: [{
         content: String,
         author: String,
-        postDate: { type: Date, default: Date.now }
+        postDate: { type: Date, default: Date.now },
+        averageRating: { type: Number, default: 0 }
     }],
     ratings: [{
         author: String,
