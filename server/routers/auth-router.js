@@ -15,6 +15,6 @@ module.exports = ({ app, controllers }) => {
     app.post("/auth/logout", controllers.auth.logoutUser);
     app.post("/auth/verify", controllers.auth.verifyLogin);
 
-    app.get('/auth/facebook', passport.authenticate('facebook'));
-    app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), facebookCallback);
+    app.get("/auth/facebook", passport.authenticate("facebook"));
+    app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), facebookCallback);
 };

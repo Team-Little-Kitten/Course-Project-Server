@@ -11,7 +11,9 @@ let userSchema = mongoose.Schema({
     passHash: { type: String, required: true },
     about: { type: String, default: "Nothing here." },
     signature: { type: String, default: "Nothing here." },
-    imageDataUrl: { type: String, default: defaultImage }
+    imageDataUrl: { type: String, default: defaultImage },
+    rating: { type: Number, default: 0 },
+    rank: { type: String, default: "Newbie" }
 });
 
 userSchema.methods = {

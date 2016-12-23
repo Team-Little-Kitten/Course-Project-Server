@@ -18,7 +18,9 @@ module.exports = () => {
                         _id: user._id,
                         about: user.about,
                         signature: user.signature,
-                        imageDataUrl: user.imageDataUrl
+                        imageDataUrl: user.imageDataUrl,
+                        rank: user.rank,
+                        rating: user.rating
                     }
                 });
             });
@@ -52,7 +54,9 @@ module.exports = () => {
                             _id: data._id,
                             about: data.about,
                             signature: data.signature,
-                            imageDataUrl: data.imageDataUrl
+                            imageDataUrl: data.imageDataUrl,
+                            rank: data.rank,
+                            rating: data.rating
                         }
                     });
                 });

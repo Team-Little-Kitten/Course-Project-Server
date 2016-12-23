@@ -1,4 +1,5 @@
 const LiteraryPiece = require("./../models/literary-piece");
+const User = require("./../models/user");
 
 function compareByDate(a, b) {
     if (a.createdOn > b.createdOn) {
@@ -32,6 +33,16 @@ function compareByRating(a, b) {
         return -1;
     }
     return 0;
+}
+
+function evaluateRank(rating) {
+    if (rating < 3) {
+        return "Newbie";
+    } else if (rating < 7) {
+        return "Regular";
+    } else {
+        return "Master";
+    }
 }
 
 module.exports = () => {
@@ -97,7 +108,7 @@ module.exports = () => {
                         if (err) {
                             reject();
                         }
-                        resolve(result.pieces = pieces)
+                        resolve(result.pieces = pieces);
                     });
 
             });
@@ -204,6 +215,7 @@ module.exports = () => {
             let pieceId = req.body.pieceId;
             let commentId = req.body.commentId;
             let username = req.body.currentUser;
+            let commentAuthor = req.body.commentAuthor;
 
             LiteraryPiece.findOne({ "_id": pieceId },
                 (err, resultedPiece) => {
@@ -231,9 +243,22 @@ module.exports = () => {
                         resultedPiece
                             .save()
                             .then(() => {
-                                res.json({
-                                    updatedComments: resultedPiece.comments,
-                                    message: { type: "success", text: "Successfuly rated." }
+                                User.findOne({ "username": commentAuthor }, (error, resultUser) => {
+                                    if (error) {
+                                        return res.json(error);
+                                    }
+
+                                    resultUser.rating += 1;
+                                    resultUser.rank = evaluateRank(resultUser.rating);
+
+                                    resultUser
+                                        .save()
+                                        .then(() => {
+                                            return res.json({
+                                                updatedComments: resultedPiece.comments,
+                                                message: { type: "success", text: "Successfuly rated." }
+                                            });
+                                        });
                                 });
                             });
                     }
@@ -243,6 +268,7 @@ module.exports = () => {
             let pieceId = req.body.pieceId;
             let commentId = req.body.commentId;
             let username = req.body.currentUser;
+            let commentAuthor = req.body.commentAuthor;
 
             LiteraryPiece.findOne({ "_id": pieceId },
                 (err, resultedPiece) => {
@@ -268,13 +294,31 @@ module.exports = () => {
                             }
                         }
 
-                        resultedPiece.save()
-                            .then(
-                                res.json({
-                                    updatedComments: resultedPiece.comments,
-                                    message: { type: "success", text: "Successfuly rated." }
-                                })
-                            );
+                        resultedPiece
+                            .save()
+                            .then(() => {
+                                User.findOne({ "username": commentAuthor }, (error, resultUser) => {
+                                    if (error) {
+                                        return res.json(error);
+                                    }
+
+                                    resultUser.rating -= 1;
+                                    if (resultUser.rating < 0) {
+                                        resultUser.rating = 0;
+                                    }
+                                    
+                                    resultUser.rank = evaluateRank(resultUser.rating);
+
+                                    resultUser
+                                        .save()
+                                        .then(() => {
+                                            return res.json({
+                                                updatedComments: resultedPiece.comments,
+                                                message: { type: "success", text: "Successfuly rated." }
+                                            });
+                                        });
+                                });
+                            });
                     }
                 });
         }
