@@ -20,7 +20,8 @@ module.exports = () => {
                         signature: user.signature,
                         imageDataUrl: user.imageDataUrl,
                         rank: user.rank,
-                        rating: user.rating
+                        critiqueRating: user.critiqueRating,
+                        writerRating: user.writerRating
                     }
                 });
             });

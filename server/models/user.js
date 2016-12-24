@@ -12,7 +12,8 @@ let userSchema = mongoose.Schema({
     about: { type: String, default: "Nothing here." },
     signature: { type: String, default: "Nothing here." },
     imageDataUrl: { type: String, default: defaultImage },
-    rating: { type: Number, default: 0 },
+    writerRating: { type: Number, default: 0 },
+    critiqueRating: { type: Number, default: 0 },
     rank: { type: String, default: "Newbie" }
 });
 

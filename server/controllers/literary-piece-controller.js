@@ -177,10 +177,13 @@ module.exports = () => {
         },
         addComment(req, res) {
             let id = req.body.id;
+            let pieceAuthor = req.body.pieceAuthor;
+            let averageRating = (+req.body.storyRating + +req.body.charactersRating + +req.body.dialogueRating + +req.body.styleRating + +req.body.feelRating) / 5;
+
             let newComment = {
                 content: req.body.commentBody,
                 author: req.body.author,
-                averageRating: (+req.body.storyRating + +req.body.charactersRating + +req.body.dialogueRating + +req.body.styleRating + +req.body.feelRating) / 5
+                averageRating: +averageRating
             };
 
             let newRating = {
@@ -203,10 +206,22 @@ module.exports = () => {
                     if (err) {
                         res.json({ message: { type: "error", text: "Duplicate key!" } });
                     } else {
-                        res.json({
-                            updatedComments: updatedResult.comments,
-                            updatedRatings: updatedResult.ratings,
-                            message: { type: "success", text: "Successfuly saved." }
+                        User.findOne({ "username": pieceAuthor }, (error, resultUser) => {
+                            if (error) {
+                                return res.json(error);
+                            }
+
+                            resultUser.writerRating += +averageRating;
+
+                            resultUser
+                                .save()
+                                .then(() => {
+                                    return res.json({
+                                        updatedComments: updatedResult.comments,
+                                        updatedRatings: updatedResult.ratings,
+                                        message: { type: "success", text: "Successfuly saved." }
+                                    });
+                                });
                         });
                     }
                 });
@@ -248,8 +263,8 @@ module.exports = () => {
                                         return res.json(error);
                                     }
 
-                                    resultUser.rating += 1;
-                                    resultUser.rank = evaluateRank(resultUser.rating);
+                                    resultUser.critiqueRating += 1;
+                                    resultUser.rank = evaluateRank(resultUser.critiqueRating);
 
                                     resultUser
                                         .save()
@@ -302,12 +317,12 @@ module.exports = () => {
                                         return res.json(error);
                                     }
 
-                                    resultUser.rating -= 1;
-                                    if (resultUser.rating < 0) {
-                                        resultUser.rating = 0;
+                                    resultUser.critiqueRating -= 1;
+                                    if (resultUser.critiqueRating < 0) {
+                                        resultUser.critiqueRating = 0;
                                     }
-                                    
-                                    resultUser.rank = evaluateRank(resultUser.rating);
+
+                                    resultUser.rank = evaluateRank(resultUser.critiqueRating);
 
                                     resultUser
                                         .save()
