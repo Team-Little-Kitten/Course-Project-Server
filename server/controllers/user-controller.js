@@ -26,6 +26,18 @@ module.exports = () => {
                 });
             });
         },
+        getAllUsersData(req, res) {
+            User.find({}, (err, users) => {
+                if (err) {
+                    console.log(err);
+                }
+
+                return res.json({
+                    success: true,
+                    users
+                });
+            });
+        },
         updateUserData(req, res) {
             let body = req.body;
             let updateObject = {};
