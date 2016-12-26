@@ -66,6 +66,19 @@ module.exports = () => {
                 if (err) res.json({ success: false, message: err.toString() });
                 return res.json({ success: true, result: threads });
             });
+        },
+        addComment(req, res) {
+            let title = req.params.title;
+            let comment = req.body;
+            Thread.findOne({ title }, (err, thread) => {
+                if (err) if (err) res.json({ success: false, message: error.toString() });
+                
+                thread.comments.push(comment);
+                thread.save((error) => {
+                    if (error) res.json({ success: false, message: error.toString() });
+                    res.json({ success: true, thread });
+                });
+            })
         }
     };
 };
