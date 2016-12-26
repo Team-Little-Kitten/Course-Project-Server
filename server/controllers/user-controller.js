@@ -74,6 +74,126 @@ module.exports = () => {
                     });
                 });
             });
+        },
+        followUser(req, res) {
+            let sender = req.body.currentUserUsername;
+            let userToFollow = req.body.userToFollow;
+
+            if (sender === userToFollow) {
+                return res.json({ message: { type: "error", text: "You can not unfollow yourself" } });
+            }
+
+            User.findOne({ username: userToFollow })
+                .then(userToFollowResult => {
+
+                    User.findOne({ username: sender })
+                        .then(foundUser => {
+
+                            let alreadyFollowed = false;
+                            for (let i = 0; i < foundUser.usersFollowing.length; i += 1) {
+                                if (foundUser.usersFollowing[i].username === userToFollow) {
+                                    alreadyFollowed = true;
+                                    break;
+                                }
+                            }
+
+                            if (alreadyFollowed) {
+                                res.json({ message: { type: "error", text: "You already followed this user." } });
+                            } else {
+                                let update = {
+                                    $push: { usersFollowing: { username: userToFollowResult.username, _id: userToFollowResult._id } }
+                                };
+                                let options = { safe: true, upsert: true };
+                                User.findOneAndUpdate({ username: sender }, update, options,
+                                    (err) => {
+                                        if (err) {
+                                            res.json({ message: { type: "error", text: "" } });
+                                        } else {
+                                            res.json({
+                                                message: { type: "success", text: "" }
+                                            });
+                                        }
+                                    });
+                            }
+                        });
+                })
+                .then(() => {
+                    // add the sender to the followed user's array of follewedUsers
+                    User.findOne({ username: sender })
+                        .then(foundUser => {
+
+                            let alreadyFollowed = false;
+                            for (let i = 0; i < foundUser.usersFollowing.length; i += 1) {
+                                if (foundUser.usersFollowed[i].username === userToFollow) {
+                                    alreadyFollowed = true;
+                                    break;
+                                }
+                            }
+
+                            if (!alreadyFollowed) {
+                                let update = {
+                                    $push: { usersFollowed: { username: foundUser.username, _id: foundUser._id } }
+                                };
+                                let options = { safe: true, upsert: true };
+                                User.findOneAndUpdate({ username: userToFollow }, update, options,
+                                    (err) => {
+                                        if (err) {
+                                            console.log(err);
+                                        }
+                                    });
+                            }
+                        });
+                });
+        },
+        unfollowUser(req, res) {
+            let sender = req.body.currentUserUsername;
+            let userToUnFollow = req.body.userToUnfollow;
+
+            if (sender === userToUnFollow) {
+                return res.json({ message: { type: "error", text: "You can not unfollow yourself" } });
+            }
+            let promiseUserToUnFollow = new Promise((resolve, reject) => {
+                User.findOne({ username: userToUnFollow })
+                    .then(foundUser => {
+                        for (let i = 0; i < foundUser.usersFollowed.length; i += 1) {
+                            if (foundUser.usersFollowed[i].username === sender) {
+                                foundUser.usersFollowed.splice(i, 1);
+                                User.findByIdAndUpdate(foundUser._id, { usersFollowed: foundUser.usersFollowed }, (err) => {
+                                    if (err) {
+                                        return reject(err);
+                                    } else {
+                                        return resolve("success");
+                                    }
+                                });
+                            }
+                        }
+                    });
+
+            });
+            let promiseSender = new Promise((resolve, reject) => {
+                User.findOne({ username: sender })
+                    .then(foundUser => {
+                        for (let i = 0; i < foundUser.usersFollowing.length; i += 1) {
+                            if (foundUser.usersFollowing[i].username === userToUnFollow) {
+                                foundUser.usersFollowing.splice(i, 1);
+                                User.findByIdAndUpdate(foundUser._id, { usersFollowing: foundUser.usersFollowing }, (err) => {
+                                    if (err) {
+                                        return reject(err);
+                                    } else {
+                                        return resolve("success");
+                                    }
+                                });
+                            }
+                        }
+                    });
+            });
+            return Promise.all([promiseSender, promiseUserToUnFollow])
+                .then(result => {
+                    res.json({ message: { type: "success", text: "You can have unfollewed " + userToUnFollow } });
+                })
+                .catch(err => {
+                    res.json({ message: { type: "error", text: err.toString() } });
+                });
         }
     };
 };

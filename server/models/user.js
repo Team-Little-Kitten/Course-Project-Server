@@ -14,7 +14,15 @@ let userSchema = mongoose.Schema({
     imageDataUrl: { type: String, default: defaultImage },
     writerRating: { type: Number, default: 0 },
     critiqueRating: { type: Number, default: 0 },
-    rank: { type: String, default: "Newbie" }
+    rank: { type: String, default: "Newbie" },
+    notifications: [{ type: Object }],
+    usersFollowing: [{
+        username: String, _id: String
+    }],
+    usersFollowed: [{
+        username: String,
+        _id: String
+    }]
 });
 
 userSchema.methods = {
