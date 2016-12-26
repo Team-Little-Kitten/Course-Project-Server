@@ -107,10 +107,10 @@ module.exports = () => {
                                 User.findOneAndUpdate({ username: sender }, update, options,
                                     (err) => {
                                         if (err) {
-                                            res.json({ message: { type: "error", text: "" } });
+                                            res.json({ message: { type: "error", text: err.toString() } });
                                         } else {
                                             res.json({
-                                                message: { type: "success", text: "" }
+                                                message: { type: "success", text: `You are now following ${userToFollow}.` }
                                             });
                                         }
                                     });
