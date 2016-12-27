@@ -3,7 +3,6 @@ const bodyParser = require("body-parser");
 const passportConfig = require("./passport");
 const expressSession = require("express-session");
 const cors = require("cors");
-const sse = require("./../utils/server-sent-events");
 
 module.exports = () => {
     let app = express();
@@ -23,7 +22,6 @@ module.exports = () => {
         resave: true,
         saveUninitialized: true
     }));
-    app.use(sse);
     passportConfig(app);
     return app;
 };
