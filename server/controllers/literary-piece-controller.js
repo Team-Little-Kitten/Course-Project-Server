@@ -1,6 +1,8 @@
 const LiteraryPiece = require("./../models/literary-piece");
 const User = require("./../models/user");
-
+const NotificationsService = require("./../utils/notifications-service");
+const Notification = require("./../models/notification");
+var createdPiece;
 function compareByDate(a, b) {
     if (a.createdOn > b.createdOn) {
         return -1;
@@ -72,6 +74,37 @@ module.exports = () => {
                 } else {
                     res.json({ message: { type: "success", text: affected } });
                 }
+                createdPiece = result;
+            }).then(() => {
+                let username = req.body.author;
+                User.findOne({ username }, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log("asdadasdasdasd", createdPiece)
+
+                    let usersToSendNotificationTo = result.usersFollowed;
+
+                    let notificationToPush = new Notification({
+                        text: `${username} created a new piece, would like to see it?`,
+                        createdPieceId: createdPiece._id
+                    });
+                    let update = {
+                        $push: { notifications: notificationToPush }
+                    };
+                    let options = { safe: true, upsert: true };
+
+                    for (let i = 0; i < usersToSendNotificationTo.length; i += 1) {
+
+                        User.findOneAndUpdate({ "_id": usersToSendNotificationTo[i]._id, }, update, options, (error, resultt) => {
+                            if (error) {
+                                console.log("errrer", error);
+                            }
+
+                            console.log("resultt", resultt);
+                        });
+                    }
+                });
             });
         },
         getPiecesByAuthor(req, res) {
@@ -237,7 +270,7 @@ module.exports = () => {
                     if (err) {
                         res.json({ message: { type: "error", text: "Duplicate key!" } });
                     } else {
-                        for (let i = 0; i < resultedPiece.comments.length; i+= 1) {
+                        for (let i = 0; i < resultedPiece.comments.length; i += 1) {
                             if (resultedPiece.comments[i]._id == commentId) {
                                 resultedPiece.comments[i].likedBy.push(username);
                                 break;
@@ -290,7 +323,7 @@ module.exports = () => {
                     if (err) {
                         res.json({ message: { type: "error", text: "Duplicate key!" } });
                     } else {
-                        for (let i = 0; i < resultedPiece.comments.length; i+= 1) {
+                        for (let i = 0; i < resultedPiece.comments.length; i += 1) {
                             if (resultedPiece.comments[i]._id == commentId) {
                                 resultedPiece.comments[i].dislikedBy.push(username);
                                 break;
